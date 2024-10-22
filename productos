@@ -1,0 +1,112 @@
+import os
+
+productos = []
+
+
+def cargar_datos():
+    if os.path.exists('productos.txt'):
+        with open('productos.txt', 'r') as file:
+            for linea in file:
+                nombre, precio, cantidad = linea.strip().split(',')
+                productos.append({
+                    'nombre': nombre,
+                    'precio': float(precio),
+                    'cantidad': int(cantidad)
+                })
+    else:
+        print("Archivo de productos no encontrado, iniciando con una lista vacía.")
+
+
+def guardar_datos():
+    with open('productos.txt', 'w') as file:
+        for producto in productos:
+            file.write(f"{producto['nombre']},{producto['precio']},{producto['cantidad']}\n")
+    print("Datos guardados correctamente en 'productos.txt'.")
+
+
+def añadir_producto():
+    nombre = input("Introduce el nombre del producto: ").strip()
+    
+    while True:
+        try:
+            precio = float(input("Introduce el precio del producto: "))
+            cantidad = int(input("Introduce la cantidad disponible: "))
+            break
+        except ValueError:
+            print("El precio debe ser un número decimal y la cantidad un número entero.")
+
+    productos.append({
+        'nombre': nombre,
+        'precio': precio,
+        'cantidad': cantidad
+    })
+    print(f"Producto '{nombre}' añadido correctamente.")
+
+
+def ver_productos():
+    if productos:
+        print("\nLista de productos:")
+        for idx, producto in enumerate(productos, start=1):
+            print(f"{idx}. {producto['nombre']} - Precio: ${producto['precio']}, Cantidad: {producto['cantidad']}")
+    else:
+        print("No hay productos registrados.")
+
+
+def actualizar_producto():
+    nombre = input("Introduce el nombre del producto a actualizar: ").strip()
+    for producto in productos:
+        if producto['nombre'].lower() == nombre.lower():
+            print(f"Producto encontrado: {producto['nombre']} - Precio: ${producto['precio']}, Cantidad: {producto['cantidad']}")
+            while True:
+                try:
+                    nuevo_precio = float(input("Introduce el nuevo precio: "))
+                    nueva_cantidad = int(input("Introduce la nueva cantidad: "))
+                    break
+                except ValueError:
+                    print("El precio debe ser un número decimal y la cantidad un número entero.")
+            
+            producto['precio'] = nuevo_precio
+            producto['cantidad'] = nueva_cantidad
+            print(f"Producto '{producto['nombre']}' actualizado correctamente.")
+            return
+    print(f"No se encontró el producto con nombre '{nombre}'.")
+
+
+def eliminar_producto():
+    nombre = input("Introduce el nombre del producto a eliminar: ").strip()
+    for producto in productos:
+        if producto['nombre'].lower() == nombre.lower():
+            productos.remove(producto)
+            print(f"Producto '{nombre}' eliminado correctamente.")
+            return
+    print(f"No se encontró el producto con nombre '{nombre}'.")
+
+def menu():
+    cargar_datos()
+    
+    while True:
+        print("\n--- Menú de Gestión de Productos ---")
+        print("1: Añadir producto")
+        print("2: Ver productos")
+        print("3: Actualizar producto")
+        print("4: Eliminar producto")
+        print("5: Guardar datos y salir")
+        
+        opcion = input("Selecciona una opción: ")
+
+        if opcion == '1':
+            añadir_producto()
+        elif opcion == '2':
+            ver_productos()
+        elif opcion == '3':
+            actualizar_producto()
+        elif opcion == '4':
+            eliminar_producto()
+        elif opcion == '5':
+            guardar_datos()
+            break
+        else:
+            print("Por favor, selecciona una opción válida.")
+
+
+menu()
